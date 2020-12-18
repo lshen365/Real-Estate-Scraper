@@ -1,17 +1,51 @@
 from time import sleep
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
-
-class Zillow:
-    def __init__(self):
+from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
+import random
+class Property_Grab:
+    def __init__(self,):
+        # self.set_up_proxy()
         self.driver = webdriver.Chrome()
         opt = Options()
-        opt.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
+        ua = UserAgent()
+        userAgent = ua.random
+        self.set_viewport_size(800,600)
+        opt.add_argument(f"user-agent={userAgent}")
         opt.add_argument('--disable-blink-features=AutomationControlled')
+        self.properties = []
+    def delay_in_millisec(self):
+        sleep(0.25)
+    # def set_up_proxy(self):
+    #     req_proxy = RequestProxy()
+    #     proxies = req_proxy.get_proxy_list()
+    #     us_proxies = []
+    #     for x in proxies:
+    #         if x.country == "United States":
+    #             us_proxies.append(x)
+    #     PROXY = us_proxies[0].get_address()
+    #     webdriver.DesiredCapabilities.CHROME['proxy']={
+    #         "httpProxy":PROXY,
+    #         "ftpProxy":PROXY,
+    #         "sslProxy":PROXY,
+    #
+    #         "proxyType":"MANUAL",
+    #     }
+
+    def set_viewport_size(self,width, height):
+        window_size = self.driver.execute_script("""
+            return [window.outerWidth - window.innerWidth + arguments[0],
+              window.outerHeight - window.innerHeight + arguments[1]];
+            """, width, height)
+        self.driver.set_window_size(*window_size)
+
+    def scroll_to_bottom(self):
+        for x in range(0,random.randrange(80,100)):
+            self.driver.execute_script("window.scrollBy(0, {});".format(x))
 
     def create_search_query(self,zipcode,page=None):
         if page is not None:
@@ -23,7 +57,6 @@ class Zillow:
     def identify_next_page(self):
         def is_disabled():
             try:
-                print("Run")
                 self.driver.find_element_by_xpath("//a[@rel='next' and @tabindex='-1']")
                 return True #Found the last page
             except:
@@ -63,7 +96,7 @@ class Zillow:
             print("Built status not found")
             return False
 
-    def get_address(self,html):
+    def get_address(self, html):
         try:
             address = html.find("address").get_text()
             built_status = self.get_built_status(html)
@@ -96,22 +129,26 @@ class Zillow:
                 address = self.get_address(x)
                 if address != False:
                     price,bedroom,bathroom,square_feet = self.get_price_bedroom(x)
+                    self.properties.append((price,bedroom,bathroom,square_feet))
+                    print(type(self.properties))
                     print("Address: {}, Bedroom: {}, Bathroom: {}, SqrFt: {} ".format(address,price,bedroom,square_feet))
                     print("-----------------------------")
 
         except NoSuchElementException:
             print("Error has occured in finding zillow_listing_grid or properties value")
+    def get_property_list(self):
+        return self.properties
 
     def scan_zillow(self,zipcode):
         if self.search_zillow(zipcode):
-            page_tracker = 1
-            sleep(1)
+            page_tracker = 2
             while self.identify_next_page():
-                print(page_tracker)
+                sleep(5)
                 self.findProperties()
                 query = self.create_search_query(zipcode,page_tracker)
                 page_tracker += 1
-                sleep(4)
+                self.scroll_to_bottom()
+                sleep(5)
                 self.search_zillow(query)
 
 
@@ -126,8 +163,11 @@ class Zillow:
 
 
 
+zipcode = input("What zipcode do you want to look up?: ")
+test = Property_Grab()
 
-
-test = Zillow()
-test.scan_zillow("80016")
+test.scan_zillow(zipcode)
+properties = test.get_property_list()
+# test.close_driver()
+print(properties)
 #test.close_driver()
