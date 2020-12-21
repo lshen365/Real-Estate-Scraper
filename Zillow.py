@@ -56,21 +56,22 @@ class Property_Grab:
                    'Accept-Encoding': 'identity'
                    }
         response = requests.get(url,headers=headers)
-        new_url = urlopen(url).read()
-        soup = BeautifulSoup(new_url,'lxml')
-        data = soup.find_all('script',type = 'application/json')
+        soup = BeautifulSoup(response.content,'lxml')
+        data = str(soup.find('script',{"data-zrr-shared-data-key":"mobileSearchPageStore"}))
+        data = data.replace("\"","")
+        #data = data.replace("<","")
+       # data = data.replace("{","")
+        #data = data.replace("}","")
+        #data = data.replace("[","")
+        #data = data.replace("]","")
+        #data = data.replace(":"," ")
 
-        for x in data:
+        for x in data.split(","):
             print(x)
-                # if is_json_key_present(new_json,'mapBounds'):
-                #     print(new_json+"\n-------------")
-        # print(soup.prettify())
-        # self.driver = webdriver.Chrome()
-        # opt = Options()
-        # ua = UserAgent()
-        # userAgent = ua.random
-        # opt.add_argument(f"user-agent={userAgent}")
-        # opt.add_argument('--disable-blink-features=AutomationControlled')
+            if(re.match("mapBounds",x) != None):
+                print(x)
+                print(re.search("mapBounds",x).group(0))
+
 
 
 
