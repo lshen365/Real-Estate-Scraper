@@ -1,0 +1,4 @@
+Zipcode | Region_ID | RegionType | West | East | South | North |
+80016 93206
+80016 93206
+80016 93206
