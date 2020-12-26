@@ -37,6 +37,25 @@ class For_Sale():
             return dict["hdpData"]["homeInfo"]["listing_sub_type"]["is_FSBA"]
         except:
             return None
+
+    def get_address(self,dict):
+        return dict["address"]
+
+    def get_bed(self,dict):
+        return dict["beds"]
+
+    def get_baths(self,dict):
+        return dict["baths"]
+
+    def get_sqft(self,dict):
+        return dict["area"]
+
+    def get_home_status(self,dict):
+        return dict["hdpData"]["homeInfo"]["homeStatus"]
+
+    def get_rent_zestimate(self,dict):
+        return dict["hdpData"]["homeInfo"]["rentZestimate"]
+
     def interate_thru_property(self):
         properties = self.get_property_list()
         failed = 0
@@ -44,11 +63,21 @@ class For_Sale():
         for x in properties:
             try:
                 #price = self.get_price(x)
-                fsba_status = self.get_is_FSBA(x)
-                #print(fsba_status)
+                #fsba_status = self.get_is_FSBA(x)
+                #zid = self.get_zid(x) #Produced an error
+                #longitude = self.get_long(x)
+                #latitude = self.get_lat(x)
+                #zillow_sale_price = self.get_zillow_sale_price(x) #Produces an error for Lots/Land or when Zillow Estimate = None
+                #address = self.get_address(x)
+                #bed = self.get_bed(x) #Returns errors on buildings
+                #bath = self.get_baths(x) #Return errors on buildings
+                #sqft = self.get_sqft(x) #Return errors on buildings
+                home_status = self.get_home_status(x) #Return errors on buildings
             except:
-                pass
                 print(x)
+                pass
+
+
     # def get_long(self):
     #
     # def get_lat:

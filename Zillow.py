@@ -11,11 +11,12 @@ import requests
 import json
 from urllib.request import urlopen
 class Property_Grab:
-    def __init__(self,zip):
+    def __init__(self,zip,filters):
         # self.set_up_proxy()
         self.zipcode = zip
         self.zipcode_dict = {}
-
+        self.read_file()
+        self.rent,self.premarket,self.foresale,self.fsba,self.fsbo,self.forAuction = filters
     def read_file(self):
         f = open("zipcodes.txt")
         count = 1 # Skips the first line
@@ -128,21 +129,28 @@ class Property_Grab:
         east = self.zipcode_dict[self.zipcode]["East"]
         south = self.zipcode_dict[self.zipcode]["South"]
         north = self.zipcode_dict[self.zipcode]["North"]
-        url = "https://www.zillow.com/search/GetSearchPageState.htm?searchQueryState={{\"pagination\":{{}},\"usersSearchTerm\":\"{}\",\"mapBounds\":{{\"west\":{},\"east\":{},\"south\":{},\"north\":{} }},\"regionSelection\":[{{\"regionId\":{},\"regionType\":{} }}],\"isMapVisible\":true,\"filterState\":{{\"sortSelection\":{{\"value\":\"globalrelevanceex\"}},\"isAllHomes\"" \
-              ":{{\"value\":true}}}},\"isListVisible\":true,\"mapZoom\":13}}&wants={{\"cat1\":[\"mapResults\"]}}&requestId=2".format(zipcode,west,east,south,north,regionID,regionType)
+        # url = "https://www.zillow.com/search/GetSearchPageState.htm?searchQueryState={{\"pagination\":{{}},\"usersSearchTerm\":\"{}\",\"mapBounds\":{{\"west\":{},\"east\":{},\"south\":{},\"north\":{} }},\"regionSelection\":[{{\"regionId\":{},\"regionType\":{} }}],\"isMapVisible\":true,\"filterState\":{{\"sortSelection\":{{\"value\":\"globalrelevanceex\"}},\"isAllHomes\"" \
+        #       ":{{\"value\":true}}}},\"isListVisible\":true,\"mapZoom\":13}}&wants={{\"cat1\":[\"mapResults\"]}}&requestId=2".format(self.zipcode,west,east,south,north,regionID,regionType)
+        url = "https://www.zillow.com/search/GetSearchPageState.htm?searchQueryState={{\"pagination\":{{}},\"usersSearchTerm\":{} ," \
+              "\"mapBounds\":{{\"west\":{},\"east\":{},\"south\":{},\"north\":{}}},\"regionSelection\":[{{\"regionId\":{}," \
+              "\"regionType\":{} }}],\"isMapVisible\":true,\"filterState\":{{\"isForSaleByAgent\":{{\"value\":{}}}," \
+              "\"isForSaleByOwner\":{{\"value\":{} }},\"isNewConstruction\":{{\"value\":false}},\"isForSaleForeclosure\":{{\"value\":{}}}," \
+              "\"isComingSoon\":{{\"value\":false}},\"isAuction\":{{\"value\":{} }},\"isPreMarketForeclosure\":{{\"value\":{} }}," \
+              "\"isPreMarketPreForeclosure\":{{\"value\":false}},\"isForRent\":{{\"value\":{}}},\"isAllHomes\":{{\"value\":true}}}}," \
+              "\"isListVisible\":true,\"mapZoom\":12}}&wants={{\"cat1\":[\"mapResults\"]}}&requestId=2".format(self.zipcode,west,east,south,north,regionID,regionType,self.fsba,self.fsbo,self.foresale,self.forAuction,self.premarket,self.rent)
         return url
 
 
 
 
 
-zipcode = input("What zipcode do you want to look up?: ")
-test = Property_Grab(zipcode)
-test.read_file()
-if test.zipcodes_get(zipcode) != None:
-    print(test.generate_link())
-else:
-    test.append_to_file()
-# test.locate_id(zipcode)
+# zipcode = input("What zipcode do you want to look up?: ")
+# test = Property_Grab(zipcode)
+# test.read_file()
+# if test.zipcodes_get(zipcode) != None:
+#     print(test.generate_link())
+# else:
+#     test.append_to_file()
+# # test.locate_id(zipcode)
 
 
