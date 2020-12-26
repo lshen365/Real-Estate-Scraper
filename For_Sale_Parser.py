@@ -1,5 +1,6 @@
 import json
 import requests
+import re
 class For_Sale():
     def __init__(self,url):
         headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.11 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9',
@@ -21,7 +22,7 @@ class For_Sale():
         return dict["latLong"]["longitude"]
 
     def get_lat(self,dict):
-        return dict["latLong"]["longitude"]
+        return dict["latLong"]["latitude"]
 
     def get_price(self,dict):
         return dict["hdpData"]["homeInfo"]["price"]
@@ -40,7 +41,8 @@ class For_Sale():
             return None
 
     def get_address(self,dict):
-        return dict["address"]
+        address = re.search('([0-9]+-\w+-\w+-\w+-\w+)',dict["detailUrl"]).group(1)
+        return address
 
     def get_bed(self,dict):
         return dict["beds"]
@@ -59,7 +61,7 @@ class For_Sale():
 
     def write_first_line(self):
         f = open("properties_data.txt","w")
-        f.write("ZID | ADDRESS | LONG | LAT | BED | BATH | SQFT | ZESTIMATE | Price | FSBA | HOME_STATUS \n")
+        f.write("ADDRESS | LAT | LONG | BED | BATH | SQFT | ZESTIMATE | Price | FSBA | HOME_STATUS | ZID \n")
 
     def append_to_file(self,information):
         line = ""
@@ -82,14 +84,15 @@ class For_Sale():
                 longitude = str(self.get_long(x))
                 latitude = str(self.get_lat(x))
                 zillow_sale_price = str(self.get_zillow_sale_price(x)) #Produces an error for Lots/Land or when Zillow Estimate = None
-                #address = self.get_address(x)
+                address = self.get_address(x)
                 bed = str(self.get_bed(x)) #Returns errors on buildings
                 bath = str(self.get_baths(x)) #Return errors on buildings
                 sqft = str(self.get_sqft(x)) #Return errors on buildings
                 home_status = str(self.get_home_status(x)) #Return errors on buildings
-                result = [zid,longitude,latitude,bed,bath,sqft,zillow_sale_price,price,fsba_status,home_status]
+                result = [address,latitude,longitude,bed,bath,sqft,zillow_sale_price,price,fsba_status,home_status,zid]
                 self.append_to_file(result)
             except KeyError as e:
+                #print(e)
                 pass
 
 
