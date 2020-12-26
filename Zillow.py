@@ -16,7 +16,8 @@ class Property_Grab:
         self.zipcode = zip
         self.zipcode_dict = {}
         self.read_file()
-        self.rent,self.premarket,self.foresale,self.fsba,self.fsbo,self.forAuction = filters
+        self.rent, self.fsba, self.fsbo, self.forAuction, self.foresale, self.premarket = filters
+        print(self.fsba)
     def read_file(self):
         f = open("zipcodes.txt")
         count = 1 # Skips the first line

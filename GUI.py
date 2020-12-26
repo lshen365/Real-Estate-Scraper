@@ -1,6 +1,7 @@
 from tkinter import *
 from Zillow import Property_Grab
-
+from For_Sale_Parser import For_Sale
+import os
 class Gui():
     def __init__(self,master):
         self.master = master
@@ -47,49 +48,82 @@ class Gui():
         self.premarket_forecloser_checkbox.grid(row = 4, column = 5, sticky = W, pady = 2)
 
     def search_result(self):
-        try:
-            zipcode = self.zipcode_value.get("1.0",'end-1c')
-            property_link = Property_Grab(zipcode,self.retreive_button_status())
-            url = ""
-            if property_link.zipcodes_get(zipcode) != None:
-                url = property_link.generate_link()
-            else:
-                print("Zipcode data does not searching it up now...")
-                property_link.append_to_file()
-                print("Trying again now...")
-                url = property_link.generate_link()
-            self.result_text.set("Successfully generated Link")
+        def find_link():
+            try:
+                zipcode = self.zipcode_value.get("1.0",'end-1c')
+                property_link = Property_Grab(zipcode,self.retreive_button_status())
+                url = ""
+                if property_link.zipcodes_get(zipcode) != None:
+                    url = property_link.generate_link()
+                else:
+                    print("Zipcode data does not searching it up now...")
+                    property_link.append_to_file()
+                    print("Trying again now...")
+                    url = property_link.generate_link()
+                self.result_text.set("Successfully generated Link")
+                self.result_label.configure(foreground = "green")
+                return url
+            except:
+                self.result_label.configure(foreground = "red")
+                self.result_text.set("Failed to generate Link")
+
+        url = find_link()
+        if url != None:
+            For_Sale(url).interate_thru_property()
+            self.result_text.set("Successfully Loaded Files")
             self.result_label.configure(foreground = "green")
-            return url
-        except:
-            self.result_text.set("Failed to generate Link")
+
+
 
 
 
 
     def retreive_button_status(self):
         def get_rent():
-            return bool(self.rentVar.get())
+            if bool(self.rentVar.get()):
+                return "true"
+            else:
+                return "false"
 
         def get_premarket():
-            return bool(self.premarketForecloserVar.get())
+            if bool(self.premarketForecloserVar.get()):
+                return "true"
+            else:
+                return "false"
 
         def get_foresale():
-            return bool(self.foresaleForecloserVar.get())
+            if bool(self.foresaleForecloserVar.get()):
+                return "true"
+            else:
+                return "false"
 
         def get_fsba():
-            return bool(self.fsbaVar.get())
+            if bool(self.fsbaVar.get()):
+                return "true"
+            else:
+                return "false"
 
         def get_fsbo():
-            return bool(self.fsboVar.get())
+            if bool(self.fsboVar.get()):
+                return "true"
+            else:
+                return "false"
 
         def get_forAuction():
-            return bool(self.forAuctionVar.get())
+            if bool(self.forAuctionVar.get()):
+                return "true"
+            else:
+                return "false"
         return get_rent(),get_fsba(),get_fsbo(),get_forAuction(),get_foresale(),get_premarket()
 
 
+def remove_property_txt():
+    try:
+        os.remove("properties_data.txt")
+    except:
+        pass
 
-
+remove_property_txt()
 root = Tk()
 my_gui = Gui(root)
 root.mainloop()
