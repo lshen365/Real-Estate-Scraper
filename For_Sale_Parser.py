@@ -1,6 +1,8 @@
 import json
 import requests
 import re
+from Proxy_Search import Find_Property_Details
+from database import sql
 class For_Sale():
     def __init__(self,url):
         headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.11 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9',
@@ -56,6 +58,10 @@ class For_Sale():
     def get_home_status(self,dict):
         return dict["hdpData"]["homeInfo"]["homeStatus"]
 
+    def get_zipcode(self,dict):
+        return dict["hdpData"]["homeInfo"]["zipcode"]
+
+
     def get_rent_zestimate(self,dict):
         return dict["hdpData"]["homeInfo"]["rentZestimate"]
 
@@ -89,8 +95,12 @@ class For_Sale():
                 bath = str(self.get_baths(x)) #Return errors on buildings
                 sqft = str(self.get_sqft(x)) #Return errors on buildings
                 home_status = str(self.get_home_status(x)) #Return errors on buildings
-                result = [address,latitude,longitude,bed,bath,sqft,zillow_sale_price,price,fsba_status,home_status,zid]
-                self.append_to_file(result)
+                zipcode = self.get_zipcode(x)
+                year_built,major_remodel,hoa,heating = Find_Property_Details(zid).parse_data()
+                result = [zid,latitude,longitude,bed,bath,sqft,zillow_sale_price,price,hoa,year_built,major_remodel,heating,zipcode,address]
+                print(f"Year Built: {year_built} \n Remodeled: {major_remodel} \n HOA Fee: {hoa} \n Heating {heating} \n ZID: {zid}")
+                sql().insert_property(result)
+                #self.append_to_file(result)
             except KeyError as e:
                 #print(e)
                 pass

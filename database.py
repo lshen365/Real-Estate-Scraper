@@ -27,4 +27,41 @@ class sql:
                 self.pw = x
             count += 1
 
+    def insert_property(self, property_data):
+        count = 0;
+        for x in property_data:
+            if x == "":
+                property_data[count] = None
+            count+=1
+        zid = int(property_data[0])
+        lat = property_data[1]
+        long = property_data[2]
+        bed = float(property_data[3]) if property_data[3] is not None else None
+        bath = float(property_data[4]) if property_data[4] is not None else None
+        sqft = int(property_data[5]) if property_data[5] is not None else None
+        zestimate = int(property_data[6]) if property_data[6] is not None else None
+        price = float(property_data[7]) if property_data[7] is not None else None
+        hoa = property_data[8]
+        year_built = int(property_data[9]) if property_data[9] is not None else None
+        year_remodel = int(property_data[10]) if property_data[10] is not None else None
+        heating = property_data[11]
+        zipcode = int(property_data[12]) if property_data[12] is not None else None
+        address = property_data[13]
+        print(zipcode)
+        cursor = self.mydb.cursor()
+        query = "INSERT INTO real_estate (zid, Latitude, Longitude, Bed, Bath, Sqft, Zestimate, Price, " \
+                "HOA, `Year Built`, `Remodel Year`, Heating, zipcode, address) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}'," \
+                "'{}','{}','{}','{}','{}')".format(zid,lat,long,bed,bath,sqft,zestimate,price,hoa,year_built,year_remodel,heating,zipcode,address)
+        #cursor.execute("INSERT INTO real_estate (zid, Latitude, Longitude, Bed, Bath, Sqft, Zestimate, Price, HOA, Year Built, Remodel Year, Heating, zipcode, address) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(zid,lat,long,bed,bath,sqft,zestimate,price,hoa,year_built,year_remodel,heating,zipcode,address))
+        cursor.execute(query)
+        cursor.close()
+        self.mydb.commit()
+
+    # def insertStoreEntry(self,store_id,sku,price,exist,location):
+    #     cursor = self.mydb.cursor()
+    #     query = "INSERT INTO Walmart{} (sku, Price, availability, location) VALUES ('{}',{},{},'{}')".format(store_id,sku,price,exist,location)
+    #     print("Successfully inserted Walmart{} with SKU={} entry".format(store_id,sku))
+    #     cursor.execute(query)
+    #     cursor.close()
+    #     self.mydb.commit()
 test = sql()
