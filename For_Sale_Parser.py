@@ -97,10 +97,12 @@ class For_Sale():
                 home_status = str(self.get_home_status(x)) #Return errors on buildings
                 zipcode = self.get_zipcode(x)
                 year_built,major_remodel,hoa,heating = Find_Property_Details(zid).parse_data()
-                result = [zid,latitude,longitude,bed,bath,sqft,zillow_sale_price,price,hoa,year_built,major_remodel,heating,zipcode,address]
+                result = [zid,latitude,longitude,bed,bath,sqft,zillow_sale_price,price,hoa,year_built,major_remodel,heating,home_status,zipcode,address]
                 print(f"Year Built: {year_built} \n Remodeled: {major_remodel} \n HOA Fee: {hoa} \n Heating {heating} \n ZID: {zid}")
-                sql().insert_property(result)
-                #self.append_to_file(result)
+                sql = sql()
+                sql.insert_property(result)
+                sql.close()
+
             except KeyError as e:
                 #print(e)
                 pass

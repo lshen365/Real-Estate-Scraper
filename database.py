@@ -17,6 +17,9 @@ class sql:
                 print("Database does not exist")
             else:
                 print(err)
+    def close(self):
+        self.mydb.close()
+
     def read_config(self):
         f = open("database/config.txt")
         count = 0
@@ -45,13 +48,14 @@ class sql:
         year_built = int(property_data[9]) if property_data[9] is not None else None
         year_remodel = int(property_data[10]) if property_data[10] is not None else None
         heating = property_data[11]
-        zipcode = int(property_data[12]) if property_data[12] is not None else None
-        address = property_data[13]
+        status = property_data[12]
+        zipcode = int(property_data[13]) if property_data[13] is not None else None
+        address = property_data[14]
         print(zipcode)
         cursor = self.mydb.cursor()
         query = "INSERT INTO real_estate (zid, Latitude, Longitude, Bed, Bath, Sqft, Zestimate, Price, " \
-                "HOA, `Year Built`, `Remodel Year`, Heating, zipcode, address) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}'," \
-                "'{}','{}','{}','{}','{}')".format(zid,lat,long,bed,bath,sqft,zestimate,price,hoa,year_built,year_remodel,heating,zipcode,address)
+                "HOA, `Year Built`, `Remodel Year`, Heating,status, zipcode, address) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}'," \
+                "'{}','{}','{}','{}','{}','{}')".format(zid,lat,long,bed,bath,sqft,zestimate,price,hoa,year_built,year_remodel,heating,status,zipcode,address)
         #cursor.execute("INSERT INTO real_estate (zid, Latitude, Longitude, Bed, Bath, Sqft, Zestimate, Price, HOA, Year Built, Remodel Year, Heating, zipcode, address) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(zid,lat,long,bed,bath,sqft,zestimate,price,hoa,year_built,year_remodel,heating,zipcode,address))
         cursor.execute(query)
         cursor.close()
