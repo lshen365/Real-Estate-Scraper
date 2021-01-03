@@ -1,8 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-import json
 import re
-class Proxy_Search():
+class Proxy_Search:
 
     def find_link(self):
 
@@ -12,19 +11,18 @@ class Proxy_Search():
 
         params = (
             ("url","https://www.zillow.com/homedetails/24552-E-Easter-Pl-Aurora-CO-80016/54644111_zpid/"),
-        );
+        )
 
-        response = requests.get('https://app.zenscrape.com/api/v1/get', headers=headers, params=params);
+        response = requests.get('https://app.zenscrape.com/api/v1/get', headers=headers, params=params)
         print(response.text)
 
-class Find_Property_Details():
+class Find_Property_Details:
     def __init__(self,zid):
         headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.11 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9',
                    'Accept-Encoding': 'identity'
                    }
         url = "https://www.zillow.com/homedetails/{}_zpid/".format(zid)
         response = requests.get(url,headers = headers)
-        #print(response.text)
         soup = BeautifulSoup(response.content,'lxml')
         #self.data = soup.find('script', {"data-zrr-shared-data-key":"mobileSearchPageStore"}).string
         self.data = soup
@@ -51,20 +49,29 @@ class Find_Property_Details():
             result = is_wanted_data(x.get_text())
             #print(x.get_text())
             if result == 1:
-                year_built = re.search("(\d+)",x.get_text()).group(1)
+                try:
+                    year_built = re.search("(\d+)",x.get_text()).group(1)
+                except re.error:
+                    year_built = None
             elif result == 2:
-                major_remodel_year = re.search("(\d+)",x.get_text()).group(1)
+                try:
+                    major_remodel_year = re.search("(\d+)",x.get_text()).group(1)
+                except re.error:
+                    major_remodel_year = None
             elif result == 3:
-                hoa_fee = re.search("(\$\w+/\w+)",x.get_text()).group(1)
+                try:
+                    hoa_fee = re.search("(\$\w+/\w+)",x.get_text()).group(1)
+                except re.error:
+                    hoa_fee = None
             elif result == 4:
-                print(x.get_text())
+                #print(x.get_text())
                 try:
                     heating = re.findall("(\w+ \w+)",x.get_text())[1]
-                except:
-                    heating = "-1"
+                except re.error:
+                    heating = None
 
         return year_built,major_remodel_year,hoa_fee,heating
-        print(f"Year Built: {year_built} \n Remodeled: {major_remodel_year} \n HOA Fee: {hoa_fee} \n Heating {heating}")
+        #print(f"Year Built: {year_built} \n Remodeled: {major_remodel_year} \n HOA Fee: {hoa_fee} \n Heating {heating}")
 
 
 
