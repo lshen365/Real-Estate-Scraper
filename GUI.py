@@ -18,15 +18,18 @@ class Gui:
         self.foresaleForecloserVar = IntVar()
         self.premarketForecloserVar = IntVar()
         master = self.master
+
+
+
         self.zipcode = Label(master, text="Enter Zipcode: ", pady=10)
         self.zipcode_value = Text(master, height=1, width=20)
         self.zipcode_enter = Button(master, text="Search", padx=2, command=self.search_result)
         self.result_label = Label(master, textvariable=self.result_text)
 
-        self.zipcode.grid(row=0, column=0)
+        self.zipcode.grid(row=0, column=0, sticky=W)
         self.zipcode_value.grid(row=0, column=1)
-        self.zipcode_enter.grid(row=0, column=3)
-        self.result_label.grid(row=1, column=1)
+        self.zipcode_enter.grid(row=0, column=3, sticky=W)
+        self.result_label.grid(row=1, column=1, sticky=W)
 
         # Filter Lables and Checkboxes
         self.filter_label = Label(master, text="Search Filters:", font=5)
@@ -39,7 +42,7 @@ class Gui:
         self.forSaleByOwner = Checkbutton(master, text="FSBO", variable=self.fsboVar)
         self.forAuction = Checkbutton(master, text="For Auction", variable=self.forAuctionVar)
 
-        # Filter Lables and Checkboxes GRID
+        # Filter Labels and Checkboxes GRID
         self.filter_label.grid(row=3, column=0, sticky=W, pady=10)
         self.rental_checkbox.grid(row=4, column=0, sticky=W, pady=2, )
         self.forSaleByAgent.grid(row=4, column=1, sticky=W, pady=2)
@@ -47,6 +50,18 @@ class Gui:
         self.forAuction.grid(row=4, column=3, sticky=W, pady=2)
         self.foresale_forecloser_checkbox.grid(row=4, column=4, sticky=W, pady=2)
         self.premarket_forecloser_checkbox.grid(row=4, column=5, sticky=W, pady=2)
+
+        self.clean_text = StringVar()
+
+        #Cleaning Data
+        self.maintenance_label = Label(master,text = "Maintenance.py", foreground = "purple")
+        self.clean_database = Button(master,text= "Clean Database (Recommended Every 5 Days)")
+        self.clean_label = Label(master, textvariable = self.clean_text)
+        #Cleaning Grid
+        self.maintenance_label.grid(row = 5, column = 0, pady = 5,sticky=W)
+        self.clean_database.grid(row = 7, column = 0,sticky=W)
+        self.clean_label.grid(row = 8, column = 0, sticky=W)
+
 
     def search_result(self):
         def find_link():

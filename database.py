@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
-from datetime import date
+from datetime import datetime
 
 # Finding how much memory it takes https://stackoverflow.com/questions/6474591/how-can-you-determine-how-much-disk-space-a-particular-mysql-table-is-taking-up
 class sql:
@@ -60,7 +60,7 @@ class sql:
         query = "INSERT INTO real_estate (zid, Latitude, Longitude, Bed, Bath, Sqft, Zestimate, Price, " \
                 "HOA, `Year Built`, `Remodel Year`, Heating,status, zipcode, address, `inserted date`) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}'," \
                 "'{}','{}','{}','{}','{}','{}', '{}')".format(zid, lat, long, bed, bath, sqft, zestimate, price, hoa,
-                                                        year_built, year_remodel, heating, status, zipcode, address,date.today())
+                                                        year_built, year_remodel, heating, status, zipcode, address,datetime.utcnow())
         # cursor.execute("INSERT INTO real_estate (zid, Latitude, Longitude, Bed, Bath, Sqft, Zestimate, Price, HOA, Year Built, Remodel Year, Heating, zipcode, address) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(zid,lat,long,bed,bath,sqft,zestimate,price,hoa,year_built,year_remodel,heating,zipcode,address))
         cursor.execute(query)
         cursor.close()
@@ -98,6 +98,13 @@ class sql:
         if result:
             return result
         return None
+
+    def run_query_with_results(self,query,param):
+        cursor = self.mydb.cursor()
+        cursor.execute(query,param)
+        result = cursor.fetchall()
+        return result
+
 
     # def insertStoreEntry(self,store_id,sku,price,exist,location):
     #     cursor = self.mydb.cursor()
