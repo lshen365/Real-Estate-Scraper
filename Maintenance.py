@@ -6,6 +6,7 @@ class Clean:
         self.db = sql()
 
     def clean_old_dates(self):
+        #TODO: Remove entries that are older than x date
         query = """
         SELECT zid  FROM real_estate WHERE DATEDIFF (NOW(),`inserted date`) > 1; 
         """

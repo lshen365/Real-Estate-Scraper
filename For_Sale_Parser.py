@@ -84,7 +84,7 @@ class For_Sale:
             try:
                 zid = str(self.get_zid(x))  # Produced an error
                 db = sql()
-                if db.check_property(zid) is None:
+                if db.check_property(zid,"real_estate") is None:
                     price = str(self.get_price(x))
 
                     longitude = str(self.get_long(x))

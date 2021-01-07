@@ -84,26 +84,34 @@ class sql:
         """.format(zipcode)
         cursor.execute(query)
         result = cursor.fetchone()
+        cursor.close()
         if result:
             return result
         return None
 
-    def check_property(self, zid):
+    def check_property(self, zid,table):
         cursor = self.mydb.cursor()
         query = """
-        select zid from real_estate where zid = {}
-        """.format(zid)
+        select zid from {} where zid = {}
+        """.format(table,zid)
         cursor.execute(query)
         result = cursor.fetchone()
+        cursor.close()
         if result:
             return result
         return None
 
-    def run_query_with_results(self,query,param):
+    def run_query_with_results(self,query):
         cursor = self.mydb.cursor()
-        cursor.execute(query,param)
+        cursor.execute(query)
         result = cursor.fetchall()
         return result
+
+    def run_insert_query(self,query):
+        cursor = self.mydb.cursor()
+        cursor.execute(query)
+        cursor.close()
+        self.mydb.commit()
 
 
     # def insertStoreEntry(self,store_id,sku,price,exist,location):
